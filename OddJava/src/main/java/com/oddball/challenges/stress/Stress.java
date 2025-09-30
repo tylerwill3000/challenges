@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import java.time.LocalDate;
 import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,5 +37,9 @@ public class Stress {
         this.userId = userId;
         this.date = date;
         this.stress = stress;
+    }
+
+    public boolean isBadStress() {
+        return stress == 4 || stress == 5;
     }
 }

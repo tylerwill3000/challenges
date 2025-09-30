@@ -1,0 +1,1 @@
+curl http://localhost:8080/bad-day?weekToCheck=2017-05-07 | jq
