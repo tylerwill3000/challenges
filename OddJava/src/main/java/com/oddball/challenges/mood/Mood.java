@@ -1,11 +1,7 @@
 package com.oddball.challenges.mood;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "moods")
+@Table(
+    name = "moods",
+    indexes = {
+        @Index(name = "idx_mood_date", columnList = "date"),
+        @Index(name = "idx_mood_user", columnList = "userId"),
+    }
+)
 public class Mood {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
