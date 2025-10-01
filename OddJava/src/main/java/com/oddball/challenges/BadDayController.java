@@ -16,4 +16,9 @@ public class BadDayController {
     public List<BadWeek> getBadWeeks(@PathVariable LocalDate weekToCheck) {
         return badDayService.getBadWeeks(weekToCheck);
     }
+
+    @GetMapping("/streaks")
+    public List<BadDayStreak> getBadDayStreaks() {
+        return badDayService.getBadDayStreaks();
+    }
 }
