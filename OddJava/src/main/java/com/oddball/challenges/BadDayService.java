@@ -75,7 +75,7 @@ public class BadDayService {
                 currentStreak.add(badDay);
             } else {
                 // continuing (potentially) an existing streak
-                boolean isConsecutive = toLocalDate(badDay.date()).minusDays(1).equals(toLocalDate(previousBadDay.date()));
+                boolean isConsecutive = badDay.date().minusDays(1).equals(previousBadDay.date());
                 if (isConsecutive) {
                     // streak continues
                     currentStreak.add(badDay);
@@ -111,8 +111,8 @@ public class BadDayService {
      * @return A mapping of user IDs to a sorted set of bad days (sorted by day) which fall within the specified date range
      */
     private Map<Long, TreeSet<BadDayDto>> getBadDaysByUser(LocalDate from, LocalDate to) {
-        List<BadDayDto> badMoodDays = moodRepository.getBadMoodDays(from == null ? null : toDate(from), to == null ? null : toDate(to));
-        List<BadDayDto> badStressDays = stressRepository.getBadStressDays(from == null ? null : toDate(from), to == null ? null : toDate(to));
+        List<BadDayDto> badMoodDays = moodRepository.getBadMoodDays(from, to);
+        List<BadDayDto> badStressDays = stressRepository.getBadStressDays(from, to);
 
         Set<BadDayDto> allBadDays = new HashSet<>();
         allBadDays.addAll(badMoodDays);

@@ -1,6 +1,6 @@
 package com.oddball.challenges;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public record BadDayStreak(String userName, Date startDate, int streakLength) {
+public record BadDayStreak(String userName, LocalDate startDate, int streakLength) {
 }

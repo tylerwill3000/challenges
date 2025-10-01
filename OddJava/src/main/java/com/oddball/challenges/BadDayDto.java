@@ -1,6 +1,6 @@
 package com.oddball.challenges;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public record BadDayDto(long userId, Date date) {
+public record BadDayDto(long userId, LocalDate date) {
 }

@@ -1,11 +1,11 @@
 package com.oddball.challenges.stress;
 
 import jakarta.persistence.*;
-
-import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -28,14 +28,8 @@ public class Stress {
     private long userId;
 
     @Column(name="date", columnDefinition = "date")
-    private Date date;
+    private LocalDate date;
 
     @Column(name="stress", length = 1)
     private int stress;
-
-    Stress(long userId, Date date, int stress) {
-        this.userId = userId;
-        this.date = date;
-        this.stress = stress;
-    }
 }

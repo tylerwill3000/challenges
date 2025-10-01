@@ -39,10 +39,10 @@ class BadDayServiceSpec extends Specification {
         given: 'A week to query bad days for'
             LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
 
-            Date sunday = Utils.toDate(startOfWeek)
-            Date monday = Utils.toDate(startOfWeek.plusDays(1))
-            Date tuesday = Utils.toDate(startOfWeek.plusDays(2))
-            Date wednesday = Utils.toDate(startOfWeek.plusDays(3))
+            LocalDate sunday = startOfWeek
+            LocalDate monday = startOfWeek.plusDays(1)
+            LocalDate tuesday = startOfWeek.plusDays(2)
+            LocalDate wednesday = startOfWeek.plusDays(3)
 
         and: 'A user with a good day and a lot of bad days'
             User userSomeBadDays = new User(name: 'someBadDays', userName: 'someBadDays_username', zipCode: '22222')
@@ -81,8 +81,8 @@ class BadDayServiceSpec extends Specification {
 
             // good mood, good stress for all 7 days
             (0..6).each { dayOffset ->
-                entityManager.persist(new Mood(userId: userNoBadDays.id, date: Utils.toDate(startOfWeek.plusDays(dayOffset)), mood: 4))
-                entityManager.persist(new Stress(userId: userNoBadDays.id, date: Utils.toDate(startOfWeek), stress: 1))
+                entityManager.persist(new Mood(userId: userNoBadDays.id, date: startOfWeek.plusDays(dayOffset), mood: 4))
+                entityManager.persist(new Stress(userId: userNoBadDays.id, date: startOfWeek, stress: 1))
             }
 
         when: 'we ask for bad weeks'
@@ -111,13 +111,13 @@ class BadDayServiceSpec extends Specification {
         given: 'An arbitrary day to start creating moods and stresses for'
             LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
 
-            Date sunday = Utils.toDate(startOfWeek)
-            Date monday = Utils.toDate(startOfWeek.plusDays(1))
-            Date tuesday = Utils.toDate(startOfWeek.plusDays(2))
-            Date wednesday = Utils.toDate(startOfWeek.plusDays(3))
-            Date thursday = Utils.toDate(startOfWeek.plusDays(4))
-            Date friday = Utils.toDate(startOfWeek.plusDays(5))
-            Date saturday = Utils.toDate(startOfWeek.plusDays(6))
+            LocalDate sunday = startOfWeek
+            LocalDate monday = startOfWeek.plusDays(1)
+            LocalDate tuesday = startOfWeek.plusDays(2)
+            LocalDate wednesday = startOfWeek.plusDays(3)
+            LocalDate thursday = startOfWeek.plusDays(4)
+            LocalDate friday = startOfWeek.plusDays(5)
+            LocalDate saturday = startOfWeek.plusDays(6)
 
         and: 'A user with a streak of 2 bad days, a good day, then 3 bad days'
             User userWithStreaks = new User(name: 'streaks', userName: 'streaks_username', zipCode: '44444')

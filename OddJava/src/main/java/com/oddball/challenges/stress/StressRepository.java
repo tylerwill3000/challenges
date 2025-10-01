@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -19,8 +20,8 @@ public interface StressRepository extends CrudRepository<Stress, Long> {
         and (:startDate is null or s.date >= :startDate)
         and (:endDate is null or s.date <= :endDate)
     """)
-    List<BadDayDto> getBadStressDays(@Param("startDate") Date startDate,
-                                     @Param("endDate") Date endDate);
+    List<BadDayDto> getBadStressDays(@Param("startDate") LocalDate startDate,
+                                     @Param("endDate") LocalDate endDate);
 
 }
 
