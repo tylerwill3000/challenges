@@ -7,14 +7,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface StressRepository extends CrudRepository<Stress, Long> {
+
     @Query("""
-        select new com.oddball.challenges.BadDayDto(s.userId, s.date)
+        select new com.oddball.challenges.BadDayDto(s.userId, u.userName, s.date)
         from Stress s
+        join User u on s.userId = u.id
         left join Mood m on m.userId=s.userId and m.date=s.date
         where (s.stress in (4, 5) and (m is null or m.mood=3))
         and (:startDate is null or s.date >= :startDate)
@@ -22,6 +23,5 @@ public interface StressRepository extends CrudRepository<Stress, Long> {
     """)
     List<BadDayDto> getBadStressDays(@Param("startDate") LocalDate startDate,
                                      @Param("endDate") LocalDate endDate);
-
 }
 

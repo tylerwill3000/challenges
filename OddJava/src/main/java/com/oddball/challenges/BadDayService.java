@@ -2,18 +2,14 @@ package com.oddball.challenges;
 
 import com.oddball.challenges.mood.MoodRepository;
 import com.oddball.challenges.stress.StressRepository;
-import com.oddball.challenges.user.User;
-import com.oddball.challenges.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.oddball.challenges.Utils.*;
+import static com.oddball.challenges.Utils.getStartOfWeek;
 import static java.util.Comparator.comparing;
-import static java.util.function.UnaryOperator.identity;
-import static java.util.stream.Collectors.toMap;
 
 @Service
 @RequiredArgsConstructor
@@ -23,20 +19,19 @@ public class BadDayService {
 
     private final MoodRepository moodRepository;
     private final StressRepository stressRepository;
-    private final UserRepository userRepository;
 
     public List<BadWeek> getBadWeeks(LocalDate weekToCheck) {
         LocalDate startOfWeek = getStartOfWeek(weekToCheck);
         LocalDate endOfWeek = startOfWeek.plusDays(6);
 
         Map<Long, TreeSet<BadDayDto>> badDaysByUser = getBadDaysByUser(startOfWeek, endOfWeek);
-        Map<Long, User> usersById = getUsersById(badDaysByUser.keySet());
 
-        return badDaysByUser.entrySet()
+        return badDaysByUser.values()
             .stream()
-            .map(e -> {
-                User user = usersById.get(e.getKey());
-                return new BadWeek(user.getUserName(), e.getValue().size());
+            .map(userBadDays -> {
+                // each batch of bad days belong to a single user, so we can just grab the first one to get the username
+                String userName = userBadDays.getFirst().userName();
+                return new BadWeek(userName, userBadDays.size());
             })
             .filter(bw -> bw.numberOfBadDays() >= MIN_BAD_DAYS_THRESHOLD)
             .sorted(comparing(BadWeek::numberOfBadDays).reversed())
@@ -52,12 +47,10 @@ public class BadDayService {
             badDayStreaks.addAll(userStreaks);
         });
 
-        Map<Long, User> usersById = getUsersById(allBadDays.keySet());
         return badDayStreaks.stream()
             .map(streak -> {
                 BadDayDto firstBadDay = streak.getFirst();
-                User user = usersById.get(firstBadDay.userId());
-                return new BadDayStreak(user.getUserName(), firstBadDay.date(), streak.size());
+                return new BadDayStreak(firstBadDay.userName(), firstBadDay.date(), streak.size());
             })
             .sorted(comparing(BadDayStreak::streakLength).reversed())
             .limit(MAX_BAD_DAY_STREAKS)
@@ -96,12 +89,6 @@ public class BadDayService {
         }
 
         return streaks;
-    }
-
-    private Map<Long, User> getUsersById(Set<Long> userIds) {
-        return userRepository.findAllByIdIn(userIds)
-            .stream()
-            .collect(toMap(User::getId, identity()));
     }
 
     /**
