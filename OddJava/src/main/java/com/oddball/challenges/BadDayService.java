@@ -52,18 +52,15 @@ public class BadDayService {
             badDayStreaks.addAll(userStreaks);
         });
 
-        // order streaks by largest to smallest
-        badDayStreaks.sort((a, b) -> Integer.compare(b.size(), a.size()));
-
         Map<Long, User> usersById = getUsersById(allBadDays.keySet());
-
-        return badDayStreaks.subList(0, MAX_BAD_DAY_STREAKS)
-            .stream()
+        return badDayStreaks.stream()
             .map(streak -> {
                 BadDayDto firstBadDay = streak.getFirst();
                 User user = usersById.get(firstBadDay.userId());
                 return new BadDayStreak(user.getUserName(), firstBadDay.date(), streak.size());
             })
+            .sorted(comparing(BadDayStreak::streakLength).reversed())
+            .limit(MAX_BAD_DAY_STREAKS)
             .toList();
     }
 
