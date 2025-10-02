@@ -1,1 +1,1 @@
-curl http://localhost:8080/bad-day/streaks | jq
+curl http://localhost:8090/bad-day/streaks | jq
