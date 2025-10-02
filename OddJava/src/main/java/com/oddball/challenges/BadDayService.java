@@ -5,10 +5,10 @@ import com.oddball.challenges.stress.StressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.oddball.challenges.Utils.getStartOfWeek;
 import static java.util.Comparator.comparing;
 
 @Service
@@ -57,7 +57,7 @@ public class BadDayService {
             .toList();
     }
 
-    public static List<List<BadDayDto>> parseStreaks(TreeSet<BadDayDto> badDays) {
+    static List<List<BadDayDto>> parseStreaks(TreeSet<BadDayDto> badDays) {
         List<List<BadDayDto>> streaks = new ArrayList<>();
 
         List<BadDayDto> currentStreak = new ArrayList<>();
@@ -111,5 +111,13 @@ public class BadDayService {
                 .add(badDay);
         }
         return badDaysByUser;
+    }
+
+    private static LocalDate getStartOfWeek(LocalDate date) {
+        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            return date;
+        }
+
+        return date.minusDays(date.getDayOfWeek().getValue());
     }
 }
