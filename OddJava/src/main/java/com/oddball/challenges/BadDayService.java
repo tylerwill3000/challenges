@@ -107,7 +107,7 @@ public class BadDayService {
 
         Map<Long, TreeSet<BadDayDto>> badDaysByUser = new HashMap<>();
         for (BadDayDto badDay : allBadDays) {
-            badDaysByUser.computeIfAbsent(badDay.userId(), __ -> new TreeSet<>(comparing(BadDayDto::date)))
+            badDaysByUser.computeIfAbsent(badDay.userId(), __ -> new TreeSet<>())
                 .add(badDay);
         }
         return badDaysByUser;
