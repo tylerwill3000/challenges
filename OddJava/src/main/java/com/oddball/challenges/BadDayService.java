@@ -48,12 +48,12 @@ public class BadDayService {
         }
 
         return badDayStreaks.stream()
+            .sorted((a, b) -> Integer.compare(b.size(), a.size())) // largest streaks to smallest
+            .limit(MAX_BAD_DAY_STREAKS)
             .map(streak -> {
                 BadDayDto firstBadDay = streak.getFirst();
                 return new BadDayStreak(firstBadDay.userName(), firstBadDay.date(), streak.size());
             })
-            .sorted(comparing(BadDayStreak::streakLength).reversed())
-            .limit(MAX_BAD_DAY_STREAKS)
             .toList();
     }
 
