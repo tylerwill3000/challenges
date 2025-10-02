@@ -17,7 +17,7 @@ public interface StressRepository extends CrudRepository<Stress, Long> {
         from Stress s
         join User u on s.userId = u.id
         left join Mood m on m.userId=s.userId and m.date=s.date
-        where (s.stress in (4, 5) and (m is null or m.mood=3))
+        where (s.stress in (4, 5) and coalesce(m.mood, 3) = 3)
         and (:startDate is null or s.date >= :startDate)
         and (:endDate is null or s.date <= :endDate)
     """)
