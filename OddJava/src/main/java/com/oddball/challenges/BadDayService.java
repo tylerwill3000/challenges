@@ -42,10 +42,10 @@ public class BadDayService {
         List<List<BadDayDto>> badDayStreaks = new ArrayList<>();
 
         Map<Long, TreeSet<BadDayDto>> allBadDays = getBadDaysByUser(null, null);
-        allBadDays.forEach((userId, badDays) -> {
-            List<List<BadDayDto>> userStreaks = parseStreaks(badDays);
+        for (TreeSet<BadDayDto> userBadDays : allBadDays.values()) {
+            List<List<BadDayDto>> userStreaks = parseStreaks(userBadDays);
             badDayStreaks.addAll(userStreaks);
-        });
+        }
 
         return badDayStreaks.stream()
             .map(streak -> {
