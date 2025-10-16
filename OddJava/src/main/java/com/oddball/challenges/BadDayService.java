@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
 
 @Service
 @RequiredArgsConstructor
@@ -101,16 +104,10 @@ public class BadDayService {
         List<BadDayDto> badMoodDays = moodRepository.getBadMoodDays(from, to);
         List<BadDayDto> badStressDays = stressRepository.getBadStressDays(from, to);
 
-        Set<BadDayDto> allBadDays = new HashSet<>();
-        allBadDays.addAll(badMoodDays);
-        allBadDays.addAll(badStressDays);
-
-        Map<Long, TreeSet<BadDayDto>> badDaysByUser = new HashMap<>();
-        for (BadDayDto badDay : allBadDays) {
-            badDaysByUser.computeIfAbsent(badDay.userId(), __ -> new TreeSet<>())
-                .add(badDay);
-        }
-        return badDaysByUser;
+        var allBadDays = Stream.concat(badMoodDays.stream(), badStressDays.stream());
+        return allBadDays.collect(groupingBy(
+            BadDayDto::userId,
+            toCollection(TreeSet::new)));
     }
 
     private static LocalDate getStartOfWeek(LocalDate date) {
