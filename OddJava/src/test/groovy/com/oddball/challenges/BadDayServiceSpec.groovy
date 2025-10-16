@@ -7,7 +7,6 @@ import jakarta.persistence.EntityManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
-import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
 import javax.sql.DataSource
@@ -34,7 +33,6 @@ class BadDayServiceSpec extends Specification {
         }
     }
 
-    @Transactional
     def 'get bad weeks returns correct data'() {
         given: 'A week to query bad days for'
             LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
@@ -106,7 +104,6 @@ class BadDayServiceSpec extends Specification {
             }
     }
 
-    @Transactional
     def 'get bad day streaks returns correct data'() {
         given: 'An arbitrary day to start creating moods and stresses for'
             LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
