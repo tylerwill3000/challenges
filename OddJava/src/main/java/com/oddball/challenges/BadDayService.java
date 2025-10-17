@@ -47,8 +47,8 @@ public class BadDayService {
         for (TreeSet<BadDay> userBadDays : allBadDays.values()) {
             List<List<BadDay>> userStreaks = userBadDays.stream()
                 .gather(BadDayStreakGatherer.INSTANCE)
-//                .peek(streak ->
-//                    System.out.println("Found streak:\n" + streak.stream().map(o -> "    " + o).collect(joining("\n"))))
+                .peek(streak ->
+                    System.out.println("Found streak:\n" + streak.stream().map(o -> "    " + o).collect(joining("\n"))))
                 .toList();
             allBadDayStreaks.addAll(userStreaks);
         }

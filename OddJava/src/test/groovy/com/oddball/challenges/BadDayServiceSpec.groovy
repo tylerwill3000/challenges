@@ -35,43 +35,41 @@ class BadDayServiceSpec extends Specification {
 
     def 'get bad weeks returns correct data'() {
         given: 'A week to query bad days for'
-            LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
-
-            LocalDate sunday = startOfWeek
-            LocalDate monday = startOfWeek.plusDays(1)
-            LocalDate tuesday = startOfWeek.plusDays(2)
-            LocalDate wednesday = startOfWeek.plusDays(3)
+            LocalDate sunday_9_28 = LocalDate.of(2025, 9, 28)
+            LocalDate monday_9_29 = sunday_9_28.plusDays(1)
+            LocalDate tuesday_9_30 = sunday_9_28.plusDays(2)
+            LocalDate wednesday_10_1 = sunday_9_28.plusDays(3)
 
         and: 'A user with a good day and a lot of bad days'
             User userSomeBadDays = new User(name: 'someBadDays', userName: 'someBadDays_username', zipCode: '22222')
             entityManager.persist(userSomeBadDays)
 
             // sunday (good mood and good stress - GOOD DAY)
-            entityManager.persist(new Mood(userId: userSomeBadDays.id, mood: 4, date: sunday))
-            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 3, date: sunday))
+            entityManager.persist(new Mood(userId: userSomeBadDays.id, mood: 4, date: sunday_9_28))
+            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 3, date: sunday_9_28))
 
             // monday (bad mood, good stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userSomeBadDays.id, mood: 2, date: monday))
-            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 2, date: monday))
+            entityManager.persist(new Mood(userId: userSomeBadDays.id, mood: 2, date: monday_9_29))
+            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 2, date: monday_9_29))
 
             // tuesday (neutral mood, but bad stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userSomeBadDays.id, mood: 3, date: tuesday))
-            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 4, date: tuesday))
+            entityManager.persist(new Mood(userId: userSomeBadDays.id, mood: 3, date: tuesday_9_30))
+            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 4, date: tuesday_9_30))
 
             // wednesday (no mood, but bad stress - BAD DAY)
-            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 4, date: wednesday))
+            entityManager.persist(new Stress(userId: userSomeBadDays.id, stress: 4, date: wednesday_10_1))
 
         and: 'A user with only bad days, but fewer bad days than the previous'
             User userAllBadDays = new User(name: 'allBadDays', userName: 'allBadDays_username', zipCode: '3333')
             entityManager.persist(userAllBadDays)
 
             // sunday (bad mood and good stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userAllBadDays.id, mood: 2, date: sunday))
-            entityManager.persist(new Stress(userId: userAllBadDays.id, stress: 1, date: sunday))
+            entityManager.persist(new Mood(userId: userAllBadDays.id, mood: 2, date: sunday_9_28))
+            entityManager.persist(new Stress(userId: userAllBadDays.id, stress: 1, date: sunday_9_28))
 
             // monday (bad mood, bad stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userAllBadDays.id, mood: 1, date: monday))
-            entityManager.persist(new Stress(userId: userAllBadDays.id, stress: 4, date: monday))
+            entityManager.persist(new Mood(userId: userAllBadDays.id, mood: 1, date: monday_9_29))
+            entityManager.persist(new Stress(userId: userAllBadDays.id, stress: 4, date: monday_9_29))
 
         and: 'A user with no bad days'
             User userNoBadDays = new User(name: 'noBadDays', userName: 'noBadDays_username', zipCode: '55124')
@@ -79,12 +77,12 @@ class BadDayServiceSpec extends Specification {
 
             // good mood, good stress for all 7 days
             (0..6).each { dayOffset ->
-                entityManager.persist(new Mood(userId: userNoBadDays.id, date: startOfWeek.plusDays(dayOffset), mood: 4))
-                entityManager.persist(new Stress(userId: userNoBadDays.id, date: startOfWeek, stress: 1))
+                entityManager.persist(new Mood(userId: userNoBadDays.id, date: sunday_9_28.plusDays(dayOffset), mood: 4))
+                entityManager.persist(new Stress(userId: userNoBadDays.id, date: sunday_9_28, stress: 1))
             }
 
         when: 'we ask for bad weeks'
-            List<BadWeek> badWeeks = badDayService.getBadWeeks(startOfWeek)
+            List<BadWeek> badWeeks = badDayService.getBadWeeks(sunday_9_28)
 
         then: 'we have 2 entries for the 2 users with bad days'
             badWeeks.size() == 2
@@ -106,15 +104,13 @@ class BadDayServiceSpec extends Specification {
 
     def 'get bad day streaks returns correct data'() {
         given: 'An arbitrary day to start creating moods and stresses for'
-            LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
-
-            LocalDate sunday_9_28 = startOfWeek
-            LocalDate monday_9_29 = startOfWeek.plusDays(1)
-            LocalDate tuesday_9_30 = startOfWeek.plusDays(2)
-            LocalDate wednesday_10_1 = startOfWeek.plusDays(3)
-            LocalDate thursday_10_2 = startOfWeek.plusDays(4)
-            LocalDate friday_10_3 = startOfWeek.plusDays(5)
-            LocalDate saturday_10_4 = startOfWeek.plusDays(6)
+            LocalDate sunday_9_28 = LocalDate.of(2025, 9, 28)
+            LocalDate monday_9_29 = sunday_9_28.plusDays(1)
+            LocalDate tuesday_9_30 = sunday_9_28.plusDays(2)
+            LocalDate wednesday_10_1 = sunday_9_28.plusDays(3)
+            LocalDate thursday_10_2 = sunday_9_28.plusDays(4)
+            LocalDate friday_10_3 = sunday_9_28.plusDays(5)
+            LocalDate saturday_10_4 = sunday_9_28.plusDays(6)
 
         and: 'A user with a streak of 2 bad days, a good day, then 3 bad days'
             User userWithStreaks = new User(name: 'streaks', userName: 'streaks_username', zipCode: '44444')
