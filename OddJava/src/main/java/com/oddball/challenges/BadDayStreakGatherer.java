@@ -7,21 +7,21 @@ import java.util.function.Supplier;
 import java.util.stream.Gatherer;
 
 /**
- * A {@link Gatherer} that collects consecutive {@link BadDayDto}s into streaks and emits each one as a list.
- * This gatherer assumes that the input stream of {@link BadDayDto}s are sorted in chronological order.
+ * A {@link Gatherer} that collects consecutive {@link BadDay}s into streaks and emits each one as a list.
+ * This gatherer assumes that the input stream of {@link BadDay}s are sorted in chronological order.
  */
-class BadDayStreakGatherer implements Gatherer<BadDayDto, List<BadDayDto>, List<BadDayDto>> {
+class BadDayStreakGatherer implements Gatherer<BadDay, List<BadDay>, List<BadDay>> {
     static final BadDayStreakGatherer INSTANCE = new BadDayStreakGatherer();
 
     private BadDayStreakGatherer() {}
 
     @Override
-    public Supplier<List<BadDayDto>> initializer() {
+    public Supplier<List<BadDay>> initializer() {
         return ArrayList::new;
     }
 
     @Override
-    public Gatherer.Integrator<List<BadDayDto>, BadDayDto, List<BadDayDto>> integrator() {
+    public Gatherer.Integrator<List<BadDay>, BadDay, List<BadDay>> integrator() {
         return Integrator.ofGreedy((currentStreak, nextDay, downstream) -> {
             if (currentStreak.isEmpty()) {
                 // initial streak
@@ -29,7 +29,7 @@ class BadDayStreakGatherer implements Gatherer<BadDayDto, List<BadDayDto>, List<
                 return true;
             }
 
-            BadDayDto previousBadDay = currentStreak.getLast();
+            BadDay previousBadDay = currentStreak.getLast();
             boolean isConsecutive = nextDay.date().minusDays(1).equals(previousBadDay.date());
             if (isConsecutive) {
                 // streak continues
@@ -46,7 +46,7 @@ class BadDayStreakGatherer implements Gatherer<BadDayDto, List<BadDayDto>, List<
     }
 
     @Override
-    public BiConsumer<List<BadDayDto>, Downstream<? super List<BadDayDto>>> finisher() {
+    public BiConsumer<List<BadDay>, Downstream<? super List<BadDay>>> finisher() {
         // emit the last streak if we have a running one
         return (currentStreak, downstream) -> {
             if (!currentStreak.isEmpty()) {

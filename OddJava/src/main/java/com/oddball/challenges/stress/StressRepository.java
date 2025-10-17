@@ -1,6 +1,6 @@
 package com.oddball.challenges.stress;
 
-import com.oddball.challenges.BadDayDto;
+import com.oddball.challenges.BadDay;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +13,7 @@ import java.util.List;
 public interface StressRepository extends CrudRepository<Stress, Long> {
 
     @Query("""
-        select new com.oddball.challenges.BadDayDto(s.userId, u.userName, s.date)
+        select new com.oddball.challenges.BadDay(s.userId, u.userName, s.date)
         from Stress s
         join User u on s.userId = u.id
         left join Mood m on m.userId=s.userId and m.date=s.date
@@ -21,7 +21,7 @@ public interface StressRepository extends CrudRepository<Stress, Long> {
         and (:startDate is null or s.date >= :startDate)
         and (:endDate is null or s.date <= :endDate)
     """)
-    List<BadDayDto> getBadStressDays(@Param("startDate") LocalDate startDate,
-                                     @Param("endDate") LocalDate endDate);
+    List<BadDay> getBadStressDays(@Param("startDate") LocalDate startDate,
+                                  @Param("endDate") LocalDate endDate);
 }
 

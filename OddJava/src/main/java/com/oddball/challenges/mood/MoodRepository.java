@@ -1,6 +1,6 @@
 package com.oddball.challenges.mood;
 
-import com.oddball.challenges.BadDayDto;
+import com.oddball.challenges.BadDay;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -13,15 +13,15 @@ import java.util.List;
 public interface MoodRepository extends CrudRepository<Mood, Long> {
 
     @Query("""
-        select new com.oddball.challenges.BadDayDto(m.userId, u.userName, m.date)
+        select new com.oddball.challenges.BadDay(m.userId, u.userName, m.date)
         from Mood m
         join User u on m.userId = u.id
         where m.mood in (1, 2)
         and (:startDate is null or m.date >= :startDate)
         and (:endDate is null or m.date <= :endDate)
     """)
-    List<BadDayDto> getBadMoodDays(@Param("startDate") LocalDate startDate,
-                                   @Param("endDate") LocalDate endDate);
+    List<BadDay> getBadMoodDays(@Param("startDate") LocalDate startDate,
+                                @Param("endDate") LocalDate endDate);
 
 }
 

@@ -30,7 +30,7 @@ public class BadDayService {
         LocalDate startOfWeek = getStartOfWeek(weekToCheck);
         LocalDate endOfWeek = startOfWeek.plusDays(6);
 
-        Map<Long, TreeSet<BadDayDto>> badDaysByUser = getBadDaysByUser(startOfWeek, endOfWeek);
+        Map<Long, TreeSet<BadDay>> badDaysByUser = getBadDaysByUser(startOfWeek, endOfWeek);
 
         return badDaysByUser.values()
             .stream()
@@ -45,11 +45,11 @@ public class BadDayService {
     }
 
     public List<BadDayStreak> getBadDayStreaks() {
-        Map<Long, TreeSet<BadDayDto>> allBadDays = getBadDaysByUser(null, null);
+        Map<Long, TreeSet<BadDay>> allBadDays = getBadDaysByUser(null, null);
 
-        List<List<BadDayDto>> allBadDayStreaks = new ArrayList<>();
-        for (TreeSet<BadDayDto> userBadDays : allBadDays.values()) {
-            List<List<BadDayDto>> userStreaks = userBadDays.stream()
+        List<List<BadDay>> allBadDayStreaks = new ArrayList<>();
+        for (TreeSet<BadDay> userBadDays : allBadDays.values()) {
+            List<List<BadDay>> userStreaks = userBadDays.stream()
                 .gather(BadDayStreakGatherer.INSTANCE)
 //                .peek(streak -> System.out.println("Found streak: " + streak))
                 .toList();
@@ -60,7 +60,7 @@ public class BadDayService {
             .sorted((a, b) -> Integer.compare(b.size(), a.size())) // largest streaks to smallest
             .limit(MAX_BAD_DAY_STREAKS)
             .map(streak -> {
-                BadDayDto firstBadDay = streak.getFirst();
+                BadDay firstBadDay = streak.getFirst();
                 return new BadDayStreak(firstBadDay.userName(), firstBadDay.date(), streak.size());
             })
             .toList();
@@ -72,14 +72,14 @@ public class BadDayService {
      * @param to Ending day (inclusive) to retrieve bad days for. Null = no upper bound
      * @return A mapping of user IDs to a sorted set of bad days (sorted by day) which fall within the specified date range
      */
-    private Map<Long, TreeSet<BadDayDto>> getBadDaysByUser(LocalDate from, LocalDate to) {
-        List<BadDayDto> badMoodDays = moodRepository.getBadMoodDays(from, to);
-        List<BadDayDto> badStressDays = stressRepository.getBadStressDays(from, to);
+    private Map<Long, TreeSet<BadDay>> getBadDaysByUser(LocalDate from, LocalDate to) {
+        List<BadDay> badMoodDays = moodRepository.getBadMoodDays(from, to);
+        List<BadDay> badStressDays = stressRepository.getBadStressDays(from, to);
 
         var allBadDays = Stream.concat(badMoodDays.stream(), badStressDays.stream());
         return allBadDays.collect(groupingBy(
-            BadDayDto::userId,
-            toCollection(() -> new TreeSet<>(comparing(BadDayDto::date)))));
+            BadDay::userId,
+            toCollection(() -> new TreeSet<>(comparing(BadDay::date)))));
     }
 
     private static LocalDate getStartOfWeek(LocalDate date) {
