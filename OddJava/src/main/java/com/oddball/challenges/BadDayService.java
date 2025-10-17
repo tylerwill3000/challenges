@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -42,15 +45,18 @@ public class BadDayService {
     }
 
     public List<BadDayStreak> getBadDayStreaks() {
-        List<List<BadDayDto>> badDayStreaks = new ArrayList<>();
-
         Map<Long, TreeSet<BadDayDto>> allBadDays = getBadDaysByUser(null, null);
+
+        List<List<BadDayDto>> allBadDayStreaks = new ArrayList<>();
         for (TreeSet<BadDayDto> userBadDays : allBadDays.values()) {
-            List<List<BadDayDto>> userStreaks = parseStreaks(userBadDays);
-            badDayStreaks.addAll(userStreaks);
+            List<List<BadDayDto>> userStreaks = userBadDays.stream()
+                .gather(BadDayStreakGatherer.INSTANCE)
+//                .peek(streak -> System.out.println("Found streak: " + streak))
+                .toList();
+            allBadDayStreaks.addAll(userStreaks);
         }
 
-        return badDayStreaks.stream()
+        return allBadDayStreaks.stream()
             .sorted((a, b) -> Integer.compare(b.size(), a.size())) // largest streaks to smallest
             .limit(MAX_BAD_DAY_STREAKS)
             .map(streak -> {
@@ -58,40 +64,6 @@ public class BadDayService {
                 return new BadDayStreak(firstBadDay.userName(), firstBadDay.date(), streak.size());
             })
             .toList();
-    }
-
-    static List<List<BadDayDto>> parseStreaks(TreeSet<BadDayDto> badDays) {
-        List<List<BadDayDto>> streaks = new ArrayList<>();
-
-        List<BadDayDto> currentStreak = new ArrayList<>();
-        BadDayDto previousBadDay = null;
-        for (BadDayDto badDay : badDays) {
-            if (currentStreak.isEmpty()) {
-                // initial streak
-                currentStreak.add(badDay);
-            } else {
-                // continuing (potentially) an existing streak
-                boolean isConsecutive = badDay.date().minusDays(1).equals(previousBadDay.date());
-                if (isConsecutive) {
-                    // streak continues
-                    currentStreak.add(badDay);
-                } else {
-                    // streak is broken, save the current streak and start a new one
-                    streaks.add(List.copyOf(currentStreak));
-                    currentStreak.clear();
-                    currentStreak.add(badDay);
-                }
-            }
-
-            previousBadDay = badDay;
-        }
-
-        // process final bad streak (if we have leftovers)
-        if (!currentStreak.isEmpty()) {
-            streaks.add(currentStreak);
-        }
-
-        return streaks;
     }
 
     /**
