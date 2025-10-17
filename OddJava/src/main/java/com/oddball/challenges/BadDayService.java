@@ -74,11 +74,12 @@ public record BadDayService(MoodRepository moodRepository,
             groupingBy(BadDay::userId, toCollection(() -> new TreeSet<>(comparing(BadDay::date)))));
     }
 
+    /**
+     * @return The Sunday of the week that the given date falls within
+     */
     private static LocalDate getStartOfWeek(LocalDate date) {
-        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            return date;
-        }
-
-        return date.minusDays(date.getDayOfWeek().getValue());
+        return date.getDayOfWeek() == DayOfWeek.SUNDAY
+            ? date
+            : date.minusDays(date.getDayOfWeek().getValue());
     }
 }
