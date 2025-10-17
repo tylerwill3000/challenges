@@ -2,21 +2,29 @@ package com.oddball.challenges;
 
 import com.oddball.challenges.mood.MoodRepository;
 import com.oddball.challenges.stress.StressRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
 
 @Service
-public record BadDayService(MoodRepository moodRepository,
-                            StressRepository stressRepository) {
+@RequiredArgsConstructor
+public class BadDayService {
     private static final int MIN_BAD_DAYS_THRESHOLD = 2;
     private static final int MAX_BAD_DAY_STREAKS = 5;
+
+    private final MoodRepository moodRepository;
+    private final StressRepository stressRepository;;
 
     public List<BadWeek> getBadWeeks(LocalDate weekToCheck) {
         LocalDate startOfWeek = getStartOfWeek(weekToCheck);
