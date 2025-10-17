@@ -43,8 +43,8 @@ public record BadDayService(MoodRepository moodRepository,
         for (TreeSet<BadDay> userBadDays : allBadDays.values()) {
             List<List<BadDay>> userStreaks = userBadDays.stream()
                 .gather(BadDayStreakGatherer.INSTANCE)
-                .peek(streak ->
-                    System.out.println("Found streak:\n" + streak.stream().map(o -> "    " + o).collect(joining("\n"))))
+//                .peek(streak ->
+//                    System.out.println("Found streak:\n" + streak.stream().map(o -> "    " + o).collect(joining("\n"))))
                 .toList();
             allBadDayStreaks.addAll(userStreaks);
         }
@@ -70,9 +70,8 @@ public record BadDayService(MoodRepository moodRepository,
         List<BadDay> badStressDays = stressRepository.getBadStressDays(from, to);
 
         var allBadDays = Stream.concat(badMoodDays.stream(), badStressDays.stream());
-        return allBadDays.collect(groupingBy(
-            BadDay::userId,
-            toCollection(() -> new TreeSet<>(comparing(BadDay::date)))));
+        return allBadDays.collect(
+            groupingBy(BadDay::userId, toCollection(() -> new TreeSet<>(comparing(BadDay::date)))));
     }
 
     private static LocalDate getStartOfWeek(LocalDate date) {
