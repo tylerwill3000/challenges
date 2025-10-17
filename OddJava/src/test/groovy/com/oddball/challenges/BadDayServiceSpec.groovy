@@ -108,44 +108,44 @@ class BadDayServiceSpec extends Specification {
         given: 'An arbitrary day to start creating moods and stresses for'
             LocalDate startOfWeek = LocalDate.of(2025, 9, 28) // a Sunday
 
-            LocalDate sunday = startOfWeek
-            LocalDate monday = startOfWeek.plusDays(1)
-            LocalDate tuesday = startOfWeek.plusDays(2)
-            LocalDate wednesday = startOfWeek.plusDays(3)
-            LocalDate thursday = startOfWeek.plusDays(4)
-            LocalDate friday = startOfWeek.plusDays(5)
-            LocalDate saturday = startOfWeek.plusDays(6)
+            LocalDate sunday_9_28 = startOfWeek
+            LocalDate monday_9_29 = startOfWeek.plusDays(1)
+            LocalDate tuesday_9_30 = startOfWeek.plusDays(2)
+            LocalDate wednesday_10_1 = startOfWeek.plusDays(3)
+            LocalDate thursday_10_2 = startOfWeek.plusDays(4)
+            LocalDate friday_10_3 = startOfWeek.plusDays(5)
+            LocalDate saturday_10_4 = startOfWeek.plusDays(6)
 
         and: 'A user with a streak of 2 bad days, a good day, then 3 bad days'
             User userWithStreaks = new User(name: 'streaks', userName: 'streaks_username', zipCode: '44444')
             entityManager.persist(userWithStreaks)
 
             // sunday (bad mood, good stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 2, date: sunday))
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 2, date: sunday))
+            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 2, date: sunday_9_28))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 2, date: sunday_9_28))
 
             // monday (neutral mood, but bad stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 3, date: monday))
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 4, date: monday))
+            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 3, date: monday_9_29))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 4, date: monday_9_29))
 
             // tuesday (good mood and good stress - GOOD DAY)
-            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 4, date: tuesday))
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 1, date: tuesday))
+            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 4, date: tuesday_9_30))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 1, date: tuesday_9_30))
 
             // wednesday (no mood, but bad stress - BAD DAY)
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 4, date: wednesday))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 4, date: wednesday_10_1))
 
             // thursday (bad mood and bad stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 1, date: thursday))
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 4, date: thursday))
+            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 1, date: thursday_10_2))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 4, date: thursday_10_2))
 
             // friday (bad mood and neutral stress - BAD DAY)
-            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 2, date: friday))
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 3, date: friday))
+            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 2, date: friday_10_3))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 3, date: friday_10_3))
 
             // saturday (good mood and good stress - GOOD DAY)
-            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 4, date: saturday))
-            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 1, date: saturday))
+            entityManager.persist(new Mood(userId: userWithStreaks.id, mood: 4, date: saturday_10_4))
+            entityManager.persist(new Stress(userId: userWithStreaks.id, stress: 1, date: saturday_10_4))
 
         when: 'we ask for bad day streaks'
             List<BadDayStreak> badDayStreaks = badDayService.getBadDayStreaks()
@@ -157,14 +157,14 @@ class BadDayServiceSpec extends Specification {
             verifyAll(longestStreak) {
                 userName() == userWithStreaks.userName
                 it.streakLength() == 3
-                startDate() == wednesday
+                startDate() == wednesday_10_1
             }
 
             BadDayStreak shorterStreak = badDayStreaks[1]
             verifyAll(shorterStreak) {
                 userName() == userWithStreaks.userName
                 streakLength() == 2
-                startDate() == sunday
+                startDate() == sunday_9_28
             }
     }
 }

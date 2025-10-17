@@ -7,15 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +47,8 @@ public class BadDayService {
         for (TreeSet<BadDay> userBadDays : allBadDays.values()) {
             List<List<BadDay>> userStreaks = userBadDays.stream()
                 .gather(BadDayStreakGatherer.INSTANCE)
-//                .peek(streak -> System.out.println("Found streak: " + streak))
+//                .peek(streak ->
+//                    System.out.println("Found streak:\n" + streak.stream().map(o -> "    " + o).collect(joining("\n"))))
                 .toList();
             allBadDayStreaks.addAll(userStreaks);
         }
