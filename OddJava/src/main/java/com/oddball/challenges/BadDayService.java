@@ -79,7 +79,7 @@ public class BadDayService {
         var allBadDays = Stream.concat(badMoodDays.stream(), badStressDays.stream());
         return allBadDays.collect(groupingBy(
             BadDayDto::userId,
-            toCollection(TreeSet::new)));
+            toCollection(() -> new TreeSet<>(comparing(BadDayDto::date)))));
     }
 
     private static LocalDate getStartOfWeek(LocalDate date) {
