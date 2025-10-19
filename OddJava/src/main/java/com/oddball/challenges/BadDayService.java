@@ -77,7 +77,7 @@ public class BadDayService {
         List<BadDay> badMoodDays = moodRepository.getBadMoodDays(from, to);
         List<BadDay> badStressDays = stressRepository.getBadStressDays(from, to);
 
-        var allBadDays = Stream.concat(badMoodDays.stream(), badStressDays.stream());
+        Stream<BadDay> allBadDays = Stream.concat(badMoodDays.stream(), badStressDays.stream());
         return allBadDays.collect(
             groupingBy(BadDay::userId, toCollection(() -> new TreeSet<>(comparing(BadDay::date)))));
     }

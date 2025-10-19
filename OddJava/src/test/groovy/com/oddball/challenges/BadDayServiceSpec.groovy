@@ -152,7 +152,7 @@ class BadDayServiceSpec extends Specification {
             BadDayStreak longestStreak = badDayStreaks[0]
             verifyAll(longestStreak) {
                 userName() == userWithStreaks.userName
-                it.streakLength() == 3
+                streakLength() == 3
                 startDate() == wednesday_10_1
             }
 
