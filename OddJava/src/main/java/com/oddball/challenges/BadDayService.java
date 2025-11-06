@@ -24,7 +24,7 @@ public class BadDayService {
     private static final int MAX_BAD_DAY_STREAKS = 5;
 
     private final MoodRepository moodRepository;
-    private final StressRepository stressRepository;;
+    private final StressRepository stressRepository;
 
     public List<BadWeek> getBadWeeks(LocalDate weekToCheck) {
         LocalDate startOfWeek = getStartOfWeek(weekToCheck);
